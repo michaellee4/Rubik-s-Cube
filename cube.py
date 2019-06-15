@@ -29,12 +29,20 @@ Cube layed out as follows
 
 class Cube:
     def __init__(self):
-        # self.faces = [[color for _ in range(kCubiesPerFace)] for color in Color]
-        self.faces = [[random.choice(list(Color)) for _ in range(9)] for _ in range(kNumFaces)]
+        self.faces = []
+        for color in Color:
+            self.faces += [color for _ in range(kCubiesPerFace)]
+        # self.faces = [ random.choice(list(Color)) for _ in range(kNumFaces * kCubiesPerFace)]
     
     def reset(self):
-        self.faces = [[color for _ in range(kCubiesPerFace)] for color in Color]
-    
+        self.faces = []
+        for color in Color:
+            self.faces += [color for _ in range(kCubiesPerFace)]
+
+    def scramble(self):
+        for _ in range(30):
+            self.rotateFace(random.choice(turnKeys))
+
     def draw(self, PyGameDisplay):
         for face in Face:
             # 150 and 200 are to center the drawing
@@ -43,20 +51,29 @@ class Cube:
             for i in range(kCubiesPerFace):
                 x = ((i %  kCubeDim) * kCubieSize) + colOff 
                 y = ((i // kCubeDim) * kCubieSize) + rowOff
-                color = self.faces[face.value][i].value
+                color = self.faces[face.value * kCubiesPerFace + i].value
                 pygame.draw.rect(PyGameDisplay, color, (x, y, kCubieSize, kCubieSize))
+            
     def _rotateFaceMain(self, face):
         # rotate central face clockwise
-        centralFace = self.faces[keyToFace[face].value]
-        prevCC, prevEC = centralFace[corners[0]], centralFace[edges[0]]
+        faceOff = face.value * kCubiesPerFace
+        prevCC, prevEC = self.faces[faceOff + corners[0]], self.faces[faceOff + edges[0]]
         for i in range(1, len(corners)):
-            centralFace[corners[i]], prevCC = prevCC, centralFace[corners[i]] 
-            centralFace[edges[i]], prevEC = prevEC, centralFace[edges[i]] 
+            self.faces[faceOff + corners[i]], prevCC = prevCC, self.faces[faceOff + corners[i]] 
+            self.faces[faceOff + edges[i]], prevEC = prevEC, self.faces[faceOff + edges[i]] 
 
     def _rotateFaceSides(self, face):
-        pass
-        
+        # get the sequence of swapped triples
+        swaps = sidesToSwap[face]
+        prevSideColors = [self.faces[s] for s in swaps[0]]
+        for i in range(1, len(swaps)):
+            curSideIdxs = swaps[i]
+            for j in range(len(prevSideColors)):
+                self.faces[curSideIdxs[j]], prevSideColors[j] = prevSideColors[j], self.faces[curSideIdxs[j]] 
+
     def rotateFace(self, face):
+        face = keyToFace[face]
         self._rotateFaceMain(face)
+        self._rotateFaceSides(face)
         # get ordering of neighboring faces swap layers of kCubiesPerFace
 

@@ -29,15 +29,14 @@ Cube layed out as follows
 
 class Cube:
     def __init__(self):
-        self.faces = []
+        self.doneState = []
         for color in Color:
-            self.faces += [color for _ in range(kCubiesPerFace)]
+            self.doneState += [color for _ in range(kCubiesPerFace)]
+        self.faces = self.doneState[:]
         # self.faces = [ random.choice(list(Color)) for _ in range(kNumFaces * kCubiesPerFace)]
     
     def reset(self):
-        self.faces = []
-        for color in Color:
-            self.faces += [color for _ in range(kCubiesPerFace)]
+        self.faces = self.doneState[:]
 
     def scramble(self):
         for _ in range(30):

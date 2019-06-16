@@ -75,7 +75,7 @@ class Cube:
                 self.faces[curSideIdxs[j]], prevSideColors[j] = prevSideColors[j], self.faces[curSideIdxs[j]] 
 
     def rotateFace(self, face, numTurns = 1):
-        for _ in range(numTurns):
+        for _ in range(numTurns % 4):
             self._rotateFaceMain(face)
             self._rotateFaceSides(face)
         # get ordering of neighboring faces swap layers of kCubiesPerFace

@@ -66,31 +66,37 @@ strToFace = {
     'B' : Face.B,
     'D' : Face.D,
 
-    # 'u2' : (Face.U, 2),
-    # 'l2' : (Face.L, 2),
-    # 'f2' : (Face.F, 2),
-    # 'r2' : (Face.R, 2),
-    # 'b2' : (Face.B, 2),
-    # 'd2' : (Face.D, 2),
+    'u2' : Face.U,
+    'l2' : Face.L,
+    'f2' : Face.F,
+    'r2' : Face.R,
+    'b2' : Face.B,
+    'd2' : Face.D,
 
-    # 'U2' : (Face.U, 2),
-    # 'L2' : (Face.L, 2),
-    # 'F2' : (Face.F, 2),
-    # 'R2' : (Face.R, 2),
-    # 'B2' : (Face.B, 2),
-    # 'D2' : (Face.D, 2),
+    'U2' : Face.U,
+    'L2' : Face.L,
+    'F2' : Face.F,
+    'R2' : Face.R,
+    'B2' : Face.B,
+    'D2' : Face.D,
 
-    # 'u\'' : (Face.U, 3),
-    # 'l\'' : (Face.L, 3),
-    # 'f\'' : (Face.F, 3),
-    # 'r\'' : (Face.R, 3),
-    # 'b\'' : (Face.B, 3),
-    # 'd\'' : (Face.D, 3),
+    'u\'' : Face.U,
+    'l\'' : Face.L,
+    'f\'' : Face.F,
+    'r\'' : Face.R,
+    'b\'' : Face.B,
+    'd\'' : Face.D,
 
-    # 'U\'' : (Face.U, 3),
-    # 'L\'' : (Face.L, 3),
-    # 'F\'' : (Face.F, 3),
-    # 'R\'' : (Face.R, 3),
-    # 'B\'' : (Face.B, 3),
-    # 'D\'' : (Face.D, 3)
+    'U\'' : Face.U,
+    'L\'' : Face.L,
+    'F\'' : Face.F,
+    'R\'' : Face.R,
+    'B\'' : Face.B,
+    'D\'' : Face.D
 }
+
+# Stuff for Thistlewaite's
+g0moves = { 'L', 'R', 'F', 'B', 'U', 'D'}
+g1moves = { 'L', 'R', 'F', 'B', 'U2', 'D2' }
+g2moves = { 'L', 'R', 'F2', 'B2', 'U2', 'D2' }
+g3moves = { 'L2', 'R2', 'F2', 'B2', 'U2', 'D2' }

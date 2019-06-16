@@ -74,14 +74,23 @@ class Cube:
             for j in range(len(prevSideColors)):
                 self.faces[curSideIdxs[j]], prevSideColors[j] = prevSideColors[j], self.faces[curSideIdxs[j]] 
 
-    def rotateFace(self, face, numTurns = 1):
-        for _ in range(numTurns % 4):
-            self._rotateFaceMain(face)
-            self._rotateFaceSides(face)
+    def rotateFace(self, face):
+        self._rotateFaceMain(face)
+        self._rotateFaceSides(face)
         # get ordering of neighboring faces swap layers of kCubiesPerFace
 
     def performMoveSequence(self, moveList):
         for movestr in moveList:
-            face, nTurns = strToFace[movestr]
-            self.rotateFace(face, nTurns)
+            self.performMove(movestr)
+
+    def performMove(self, movestr):
+        face = strToFace[movestr[0]]
+        self.rotateFace(face)
+        if len(movestr) > 1:
+            # 2
+            self.rotateFace(face)
+            if movestr[1] == "'":
+                self.rotateFace(face)
+    
+
 

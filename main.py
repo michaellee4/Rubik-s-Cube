@@ -28,9 +28,9 @@ if __name__ == "__main__":
                 if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
                     shouldQuit = True
                 if event.key in turnKeys:
+                    cube.rotateFace(keyToFace[event.key])
                     if pygame.key.get_mods() & pygame.KMOD_SHIFT:
-                        cube.rotateFace(keyToFace[event.key], 3)
-                    else:
+                        cube.rotateFace(keyToFace[event.key])
                         cube.rotateFace(keyToFace[event.key])
     pygame.quit()
     sys.exit()

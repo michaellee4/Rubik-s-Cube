@@ -1,6 +1,6 @@
 from enum import Enum
 import pygame
-# Based on https://ruwix.com/twisty-puzzles/bandaged-cube-puzzles/
+# Layout based on https://ruwix.com/twisty-puzzles/bandaged-cube-puzzles/
 
 class Color(Enum):
     YELLOW = (255, 213, 0)
@@ -49,4 +49,32 @@ sidesToSwap = {
     Face.R : [(2, 5, 8), (42, 39, 36), (47, 50, 53), (20, 23, 26), (2, 5, 8)],
     Face.B : [(29, 32, 35), (0, 1, 2), (15, 12, 9), (53, 52, 51), (29, 32, 35)],
     Face.D : [(24, 25, 26), (33, 34, 35), (42, 43, 44), (15, 16, 17), (24, 25, 26)]
+}
+
+strToFace = {
+    'u' : Face.U,
+    'l' : Face.L,
+    'f' : Face.F,
+    'r' : Face.R,
+    'b' : Face.B,
+    'd' : Face.D,
+    'U' : Face.U,
+    'L' : Face.L,
+    'F' : Face.F,
+    'R' : Face.R,
+    'B' : Face.B,
+    'D' : Face.D,
+
+    'u\'' : Face.U,
+    'l\'' : Face.L,
+    'f\'' : Face.F,
+    'r\'' : Face.R,
+    'b\'' : Face.B,
+    'd\'' : Face.D,
+    'U\'' : Face.U,
+    'L\'' : Face.L,
+    'F\'' : Face.F,
+    'R\'' : Face.R,
+    'B\'' : Face.B,
+    'D\'' : Face.D
 }

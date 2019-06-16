@@ -1,8 +1,9 @@
 from constants import *
 import pygame
 import random
+
 """
-Cube layed out as follows
+Cube layed out as a contiguous array as follows
               ----------------
                | 0  | 1  | 2  |
                ----------------
@@ -41,6 +42,9 @@ class Cube:
     def scramble(self):
         for _ in range(30):
             self.rotateFace(random.choice(turnKeys))
+    
+    def isSolved(self):
+        return self.faces == self.doneState
 
     def draw(self, PyGameDisplay):
         for face in Face:
@@ -70,9 +74,21 @@ class Cube:
             for j in range(len(prevSideColors)):
                 self.faces[curSideIdxs[j]], prevSideColors[j] = prevSideColors[j], self.faces[curSideIdxs[j]] 
 
-    def rotateFace(self, face):
-        face = keyToFace[face]
+    def _rotateFace(self, face):
+        # face = keyToFace[face]
         self._rotateFaceMain(face)
         self._rotateFaceSides(face)
         # get ordering of neighboring faces swap layers of kCubiesPerFace
+
+    def performRotate(self, moves):
+        if type(moves) is Color:
+            self._rotateFace(moves)
+        elif type(moves) is str:
+            for move in moves:
+                self._rotateFace(strToFace[move])
+        elif moves in turnKeys:
+            self._rotateFace(keyToFace[moves])
+        else:
+            pass
+
 

@@ -92,5 +92,17 @@ class Cube:
             if movestr[1] == "'":
                 self.rotateFace(face)
     
+    def undoMove(self, moveToUndo):
+        face = strToFace[moveToUndo[0]]
+        self.rotateFace(face)
+        if moveToUndo[-1] == "'":
+            return
+        self.rotateFace(face)
+        if moveToUndo[-1] == '2':
+            return
+        self.rotateFace(face)
+
+
+ 
 
 

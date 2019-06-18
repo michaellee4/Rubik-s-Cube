@@ -1,5 +1,4 @@
 from constants import *
-import pygame
 import random
 
 """
@@ -41,22 +40,11 @@ class Cube:
 
     def scramble(self):
         for _ in range(30):
-            self.rotateFace(random.choice(turnKeys))
+            self.rotateFace(random.choice(list(Faces)))
     
     def isSolved(self):
         return self.faces == self.doneState
 
-    def draw(self, PyGameDisplay):
-        for face in Face:
-            # 150 and 200 are to center the drawing
-            rowOff = row[face.value] * kCubeDim * kCubieSize + 150
-            colOff = col[face.value] * kCubeDim * kCubieSize + 200
-            for i in range(kCubiesPerFace):
-                x = ((i %  kCubeDim) * kCubieSize) + colOff 
-                y = ((i // kCubeDim) * kCubieSize) + rowOff
-                color = self.faces[face.value * kCubiesPerFace + i].value
-                pygame.draw.rect(PyGameDisplay, color, (x, y, kCubieSize, kCubieSize))
-            
     def _rotateFaceMain(self, face):
         # rotate central face clockwise
         faceOff = face.value * kCubiesPerFace

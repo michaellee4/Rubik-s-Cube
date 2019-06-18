@@ -25,22 +25,9 @@ kScreenWidth = 1080
 kScreenHeight = 720
 kCubieSize = 50
 
-# Stuff for drawing
-col = [1, 0, 1, 2, 3, 1]
-row = [0, 1, 1, 1, 1, 2]
+
 corners =   [0, 2, 8, 6, 0]
 edges   =   [1, 5, 7, 3, 1]
-
-turnKeys = { pygame.K_u, pygame.K_l, pygame.K_f, pygame.K_r, pygame.K_b, pygame.K_d }
-
-keyToFace = {
-    pygame.K_u : Face.U,
-    pygame.K_l : Face.L,
-    pygame.K_f : Face.F,
-    pygame.K_r : Face.R,
-    pygame.K_b : Face.B,
-    pygame.K_d : Face.D    
-}
 
 sidesToSwap = {
     Face.U : [(9, 10, 11), (36, 37, 38), (27, 28, 29), (18, 19, 20), (9, 10, 11)],
@@ -94,9 +81,3 @@ strToFace = {
     'B\'' : Face.B,
     'D\'' : Face.D
 }
-
-# Stuff for Thistlewaite's
-g0moves = { 'L', 'R', 'F', 'B', 'U', 'D'}
-g1moves = { 'L', 'R', 'F', 'B', 'U2', 'D2' }
-g2moves = { 'L', 'R', 'F2', 'B2', 'U2', 'D2' }
-g3moves = { 'L2', 'R2', 'F2', 'B2', 'U2', 'D2' }

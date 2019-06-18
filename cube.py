@@ -40,7 +40,7 @@ class Cube:
 
     def scramble(self):
         for _ in range(30):
-            self.rotateFace(random.choice(list(Faces)))
+            self.rotateFace(random.choice(list(Face)))
     
     def isSolved(self):
         return self.faces == self.doneState

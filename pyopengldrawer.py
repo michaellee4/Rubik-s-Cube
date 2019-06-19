@@ -1,4 +1,5 @@
 import pygame
+import sys
 import random
 from pygame.locals import *
 from constants import *
@@ -32,7 +33,8 @@ p_rot_slice_map = {
     K_l: (0, 0, -1), K_r: (0, 2, 1), K_d: (1, 0, -1),
     K_u: (1, 2, 1), K_b: (2, 0, -1), K_f: (2, 2, 1)
 }  
-    
+
+kAnimateSpeed = 5
 class GLCubie():
     def __init__(self, id, scale):
         self.scale = scale
@@ -82,6 +84,29 @@ class GLCube():
         cr = range(kCubeDim)
         self.gl_cubies = [GLCubie((x, y, z), 1.5) for x in cr for y in cr for z in cr]
         self.cube = flat_cube
+        self.animate = False
+        self.animate_ang = 0
+        self.action = (0, 0, 0)
+    
+    def isAnimating(self):
+        return self.animate
+
+    def setAnimate(self, action):
+        self.action = action
+        self.animate = True
+
+    def update(self):
+        if self.isAnimating():
+            if self.animate_ang >= 90:
+                for cube in self.gl_cubies:
+                    cube.update(*self.action)
+                self.animate, self.animate_ang = False, 0
+    
+    def draw(self):
+        for cube in self.gl_cubies:
+            cube.draw(colors, surfaces, vertices, self.animate, self.animate_ang, *self.action)
+        if self.isAnimating():
+            self.animate_ang += kAnimateSpeed
 
 
 class PyOpenGlLoop:
@@ -99,8 +124,6 @@ class PyOpenGlLoop:
     
     def loop(self):
         ang_x, ang_y, rot_cube = 0, 0, (0, 0)
-        animate, animate_ang, animate_speed = False, 0, 5
-        action = (0, 0, 0)
 
         shouldQuit = False
         while not shouldQuit:
@@ -114,12 +137,14 @@ class PyOpenGlLoop:
                         rot_cube = rot_cube_map[event.key]
                     
                     # Non-Prime Move
-                    if not animate and event.key in rot_slice_map and not (pygame.key.get_mods() & pygame.KMOD_SHIFT):
-                        animate, action = True, rot_slice_map[event.key]
+                    if not self.gl_cube.isAnimating() and event.key in p_rot_slice_map and (pygame.key.get_mods() & pygame.KMOD_SHIFT):
+                        self.gl_cube.setAnimate(p_rot_slice_map[event.key])
+                        # animate, action = True, p_rot_slice_map[event.key]
                     
                     # Prime Move
-                    elif not animate and event.key in p_rot_slice_map:
-                        animate, action = True, p_rot_slice_map[event.key]
+                    elif not self.gl_cube.isAnimating() and event.key in rot_slice_map:
+                        self.gl_cube.setAnimate(rot_slice_map[event.key])
+                        # animate, action = True, rot_slice_map[event.key]
                 
                 # End Rotate Camera
                 if event.type == KEYUP:
@@ -139,16 +164,8 @@ class PyOpenGlLoop:
 
             glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
-            if animate:
-                if animate_ang >= 90:
-                    for cube in self.gl_cube.gl_cubies:
-                        cube.update(*action)
-                    animate, animate_ang = False, 0
-
-            for cube in self.gl_cube.gl_cubies:
-                cube.draw(colors, surfaces, vertices, animate, animate_ang, *action)
-            if animate:
-                animate_ang += animate_speed
+            self.gl_cube.update()
+            self.gl_cube.draw()
 
             pygame.display.flip()
             pygame.time.wait(10)

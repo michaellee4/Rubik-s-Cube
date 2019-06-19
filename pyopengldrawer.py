@@ -16,9 +16,9 @@ colors = (
     (185 / 255, 0, 0), #Red
     (0, 155 / 255, 72 / 255), #Green
     (255 / 255, 89 / 255, 0), #Orange
+    (0, 69 / 255, 173 / 255), #Blue
     (255 / 255, 213 / 255, 0), #Yellow
     (1,1,1), #White
-    (0, 69 / 255, 173 / 255), #Blue
     )
     
 class Cube():
@@ -76,10 +76,12 @@ class EntireCube():
 
         rot_cube_map  = { K_UP: (-1, 0), K_DOWN: (1, 0), K_LEFT: (0, -1), K_RIGHT: (0, 1)}
         rot_slice_map = {
-            K_1: (0, 0, 1), K_2: (0, 1, 1), K_3: (0, 2, 1), K_4: (1, 0, 1), K_5: (1, 1, 1),
-            K_6: (1, 2, 1), K_7: (2, 0, 1), K_8: (2, 1, 1), K_9: (2, 2, 1),
-            K_F1: (0, 0, -1), K_F2: (0, 1, -1), K_F3: (0, 2, -1), K_F4: (1, 0, -1), K_F5: (1, 1, -1),
-            K_F6: (1, 2, -1), K_F7: (2, 0, -1), K_F8: (2, 1, -1), K_F9: (2, 2, -1),
+            K_l: (0, 0, 1), K_r: (0, 2, -1), K_d: (1, 0, 1),
+            K_u: (1, 2, -1), K_b: (2, 0, 1), K_f:  (2, 2, -1) 
+        }  
+        p_rot_slice_map = {
+            K_l: (0, 0, -1), K_r: (0, 2, 1), K_d: (1, 0, -1),
+            K_u: (1, 2, 1), K_b: (2, 0, -1), K_f: (2, 2, 1)
         }  
 
         ang_x, ang_y, rot_cube = 0, 0, (0, 0)
@@ -88,14 +90,16 @@ class EntireCube():
         while True:
 
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT or (event.type == KEYDOWN and event.key == pygame.K_q):
                     pygame.quit()
                     quit()
                 if event.type == KEYDOWN:
                     if event.key in rot_cube_map:
                         rot_cube = rot_cube_map[event.key]
-                    if not animate and event.key in rot_slice_map:
+                    if not animate and event.key in rot_slice_map and not (pygame.key.get_mods() & pygame.KMOD_SHIFT):
                         animate, action = True, rot_slice_map[event.key]
+                    elif not animate and event.key in p_rot_slice_map:
+                        animate, action = True, p_rot_slice_map[event.key]
                 if event.type == KEYUP:
                     if event.key in rot_cube_map:
                         rot_cube = (0, 0)

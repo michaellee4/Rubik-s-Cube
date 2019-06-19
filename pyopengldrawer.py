@@ -111,6 +111,23 @@ class GLCube():
 
 
 class PyGLCamera:
+    def __init__(self):
+        self.ang_x = 0
+        self.ang_y = 0
+        self.rot_cube = 0, 0, (0, 0)
+    
+    def setRotation(self, rot):
+        self.rot_cube = rot
+
+    def update(self):
+        self.ang_x += self.rot_cube[0] * 2
+        self.ang_y += self.rot_cube[1] * 2
+        
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+        glTranslatef(0, 0, -40)
+        glRotatef(self.ang_y, 0, 1, 0)
+        glRotatef(self.ang_x, 1, 0, 0)
 
 class PyOpenGlLoop:
 
@@ -124,6 +141,7 @@ class PyOpenGlLoop:
         gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
 
         self.gl_cube = GLCube(flat_cube)
+        self.camera = PyGLCamera()
     
     def loop(self):
         ang_x, ang_y, rot_cube = 0, 0, (0, 0)
@@ -137,7 +155,8 @@ class PyOpenGlLoop:
 
                     #Begin Rotate Camera
                     if event.key in rot_cube_map:
-                        rot_cube = rot_cube_map[event.key]
+                        self.camera.setRotation(rot_cube_map[event.key])
+                        # rot_cube = rot_cube_map[event.key]
                     
                     if not self.gl_cube.isAnimating():
                         if event.key in turnKeys:
@@ -151,18 +170,13 @@ class PyOpenGlLoop:
                 # End Rotate Camera
                 if event.type == KEYUP:
                     if event.key in rot_cube_map:
-                        rot_cube = (0, 0)
+                        self.camera.setRotation((0, 0))
 
             # Calculate new Angle for Camera
-            ang_x += rot_cube[0]*2
-            ang_y += rot_cube[1]*2
+
 
             # Perform Camera Translation
-            glMatrixMode(GL_MODELVIEW)
-            glLoadIdentity()
-            glTranslatef(0, 0, -40)
-            glRotatef(ang_y, 0, 1, 0)
-            glRotatef(ang_x, 1, 0, 0)
+            self.camera.update()
 
             glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 

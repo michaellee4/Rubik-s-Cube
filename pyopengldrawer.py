@@ -37,11 +37,11 @@ p_rot_slice_map = {
 kAnimateSpeed = 5
 
 class GLCubie():
-    def __init__(self, id, scale):
+    def __init__(self, id, scale, flat_cube):
         self.scale = scale
         self.init_i = [*id]
         self.current_i = [*id]
-        self.rot = [[1 if i==j else 0 for i in range(3)] for j in range(3)]
+        self.rot = [[1 if i == j else 0 for i in range(3)] for j in range(3)]
 
     def isAffected(self, axis, slice, dir):
         return self.current_i[axis] == slice
@@ -53,22 +53,22 @@ class GLCubie():
 
         i, j = (axis+1) % 3, (axis+2) % 3
         for k in range(3):
-            self.rot[k][i], self.rot[k][j] = -self.rot[k][j]*dir, self.rot[k][i]*dir
+            self.rot[k][i], self.rot[k][j] = -self.rot[k][j] * dir, self.rot[k][i] * dir
 
         self.current_i[i], self.current_i[j] = (
             self.current_i[j] if dir < 0 else kCubeDim - 1 - self.current_i[j],
             self.current_i[i] if dir > 0 else kCubeDim - 1 - self.current_i[i] )
 
     def transformMat(self):
-        scaleA = [[s*self.scale for s in a] for a in self.rot]  
-        scaleT = [(p-(kCubeDim-1)/2)*2.1*self.scale for p in self.current_i] 
+        scaleA = [[s * self.scale for s in a] for a in self.rot]  
+        scaleT = [( p - (kCubeDim - 1) / 2) * 2.1 * self.scale for p in self.current_i] 
         return [*scaleA[0], 0, *scaleA[1], 0, *scaleA[2], 0, *scaleT, 1]
 
     def draw(self, col, surf, vert, animate, angle, axis, slice, dir):
 
         glPushMatrix()
         if animate and self.isAffected(axis, slice, dir):
-            glRotatef( angle*dir, *[1 if i==axis else 0 for i in range(3)] )
+            glRotatef( angle * dir, *[1 if i == axis else 0 for i in range(3)] )
         glMultMatrixf( self.transformMat() )
 
         glBegin(GL_QUADS)
@@ -83,7 +83,7 @@ class GLCubie():
 class GLCube():
     def __init__(self, flat_cube):
         cr = range(kCubeDim)
-        self.gl_cubies = [GLCubie((x, y, z), 1.5) for x in cr for y in cr for z in cr]
+        self.gl_cubies = [GLCubie((x, y, z), 1.5, flat_cube) for x in cr for y in cr for z in cr]
         self.cube = flat_cube
         self.animate = False
         self.animate_ang = 0
@@ -123,6 +123,7 @@ class PyGLCamera:
         self.ang_x += self.rot_cube[0] * 2
         self.ang_y += self.rot_cube[1] * 2
         
+        # Set the view matrix
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
         glTranslatef(0, 0, -40)
@@ -148,16 +149,19 @@ class PyOpenGlLoop:
 
         shouldQuit = False
         while not shouldQuit:
+            
+            # Event Handling
             for event in pygame.event.get():
-                if event.type == pygame.QUIT or (event.type == KEYDOWN and (event.key == pygame.K_q or event.key == pygame.K_ESCAPE)):
+                if event.type == pygame.QUIT:
                     shouldQuit = True
                 if event.type == KEYDOWN:
+                    if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
+                        shouldQuit = True
 
                     #Begin Rotate Camera
                     if event.key in rot_cube_map:
                         self.camera.setRotation(rot_cube_map[event.key])
-                        # rot_cube = rot_cube_map[event.key]
-                    
+
                     if not self.gl_cube.isAnimating():
                         if event.key in turnKeys:
                             # Prime Move
@@ -166,16 +170,12 @@ class PyOpenGlLoop:
                             # Normal Move
                             else:
                                 self.gl_cube.setAnimate(rot_slice_map[event.key])
-                
+
                 # End Rotate Camera
                 if event.type == KEYUP:
                     if event.key in rot_cube_map:
                         self.camera.setRotation((0, 0))
 
-            # Calculate new Angle for Camera
-
-
-            # Perform Camera Translation
             self.camera.update()
 
             glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
@@ -185,6 +185,7 @@ class PyOpenGlLoop:
 
             pygame.display.flip()
             pygame.time.wait(10)
+            
         pygame.quit()
         sys.exit()
 

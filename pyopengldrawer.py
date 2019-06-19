@@ -35,6 +35,7 @@ p_rot_slice_map = {
 }  
 
 kAnimateSpeed = 5
+
 class GLCubie():
     def __init__(self, id, scale):
         self.scale = scale
@@ -109,6 +110,8 @@ class GLCube():
             self.animate_ang += kAnimateSpeed
 
 
+class PyGLCamera:
+
 class PyOpenGlLoop:
 
     def init(self, flat_cube):
@@ -136,15 +139,14 @@ class PyOpenGlLoop:
                     if event.key in rot_cube_map:
                         rot_cube = rot_cube_map[event.key]
                     
-                    # Non-Prime Move
-                    if not self.gl_cube.isAnimating() and event.key in p_rot_slice_map and (pygame.key.get_mods() & pygame.KMOD_SHIFT):
-                        self.gl_cube.setAnimate(p_rot_slice_map[event.key])
-                        # animate, action = True, p_rot_slice_map[event.key]
-                    
-                    # Prime Move
-                    elif not self.gl_cube.isAnimating() and event.key in rot_slice_map:
-                        self.gl_cube.setAnimate(rot_slice_map[event.key])
-                        # animate, action = True, rot_slice_map[event.key]
+                    if not self.gl_cube.isAnimating():
+                        if event.key in turnKeys:
+                            # Prime Move
+                            if (pygame.key.get_mods() & pygame.KMOD_SHIFT):
+                                self.gl_cube.setAnimate(p_rot_slice_map[event.key])
+                            # Normal Move
+                            else:
+                                self.gl_cube.setAnimate(rot_slice_map[event.key])
                 
                 # End Rotate Camera
                 if event.type == KEYUP:

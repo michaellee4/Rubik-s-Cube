@@ -81,3 +81,14 @@ strToFace = {
     'B\'' : Face.B,
     'D\'' : Face.D
 }
+
+turnKeys = { pygame.K_u, pygame.K_l, pygame.K_f, pygame.K_r, pygame.K_b, pygame.K_d }
+
+keyToFace = {
+    pygame.K_u : Face.U,
+    pygame.K_l : Face.L,
+    pygame.K_f : Face.F,
+    pygame.K_r : Face.R,
+    pygame.K_b : Face.B,
+    pygame.K_d : Face.D    
+}

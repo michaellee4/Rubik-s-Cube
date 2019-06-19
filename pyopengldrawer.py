@@ -73,7 +73,7 @@ class GLCubie():
 
         glBegin(GL_QUADS)
         for i in range(len(surf)):
-            glColor3fv(colors[i])
+            glColor3fv(col[i])
             for j in surf[i]:
                 glVertex3fv(vertices[j])
         glEnd()
@@ -145,7 +145,6 @@ class PyOpenGlLoop:
         self.camera = PyGLCamera()
     
     def run(self):
-        ang_x, ang_y, rot_cube = 0, 0, (0, 0)
 
         shouldQuit = False
         while not shouldQuit:

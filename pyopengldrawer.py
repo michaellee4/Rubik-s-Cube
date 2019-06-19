@@ -37,7 +37,7 @@ kAnimateSpeed = 5
 kSingleTurnDegrees = 90
 
 class GLCubie():
-    def __init__(self, id, scale, flat_cube):
+    def __init__(self, id, scale):
         self.scale = scale
         self.init_i = [*id]
         self.current_i = [*id]
@@ -83,11 +83,14 @@ class GLCubie():
 class GLCube():
     def __init__(self, flat_cube):
         cr = range(kCubeDim)
-        self.gl_cubies = [GLCubie((x, y, z), 1.5, flat_cube) for x in cr for y in cr for z in cr]
-        self.cube = flat_cube
+        self.gl_cubies = [GLCubie((x, y, z), 1.5) for x in cr for y in cr for z in cr]
+        self.flat_cube = flat_cube
         self.animate = False
         self.animate_ang = 0
         self.action = (0, 0, 0)
+    
+    def setCubieColors(self):
+        pass
     
     def isAnimating(self):
         return self.animate
@@ -103,6 +106,17 @@ class GLCube():
                     cube.update(*self.action)
                 self.animate, self.animate_ang = False, 0
     
+    def handleKey(self, key, shift):
+        if shift:
+            self.setAnimate(p_rot_slice_map[key])
+            self.flat_cube.rotateFace(keyToFace[key])
+            self.flat_cube.rotateFace(keyToFace[key])
+            self.flat_cube.rotateFace(keyToFace[key])
+        else:
+            self.setAnimate(rot_slice_map[key])
+            self.flat_cube.rotateFace(keyToFace[key])
+
+
     def draw(self):
         for cube in self.gl_cubies:
             cube.draw(colors, surfaces, vertices, self.animate, self.animate_ang, *self.action)
@@ -114,7 +128,7 @@ class PyGLCamera:
     def __init__(self):
         self.ang_x = 0
         self.ang_y = 0
-        self.rot_cube = 0, 0, (0, 0)
+        self.rot_cube = (0, 0)
     
     def setRotation(self, rot):
         self.rot_cube = rot
@@ -163,13 +177,8 @@ class PyOpenGlLoop:
 
                     if not self.gl_cube.isAnimating():
                         if event.key in turnKeys:
-                            # Prime Move
-                            if (pygame.key.get_mods() & pygame.KMOD_SHIFT):
-                                self.gl_cube.setAnimate(p_rot_slice_map[event.key])
-                            # Normal Move
-                            else:
-                                self.gl_cube.setAnimate(rot_slice_map[event.key])
-
+                            self.gl_cube.handleKey(event.key, pygame.KMOD_SHIFT & pygame.key.get_mods())
+ 
                 # End Rotate Camera
                 if event.type == KEYUP:
                     if event.key in rot_cube_map:

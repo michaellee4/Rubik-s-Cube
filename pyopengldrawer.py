@@ -1,6 +1,8 @@
 import pygame
 import random
 from pygame.locals import *
+from constants import *
+from cube import Cube
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -20,10 +22,19 @@ colors = (
     (255 / 255, 213 / 255, 0), #Yellow
     (1,1,1), #White
     )
+
+rot_cube_map  = { K_UP: (-1, 0), K_DOWN: (1, 0), K_LEFT: (0, -1), K_RIGHT: (0, 1)}
+rot_slice_map = {
+    K_l: (0, 0, 1), K_r: (0, 2, -1), K_d: (1, 0, 1),
+    K_u: (1, 2, -1), K_b: (2, 0, 1), K_f:  (2, 2, -1) 
+}  
+p_rot_slice_map = {
+    K_l: (0, 0, -1), K_r: (0, 2, 1), K_d: (1, 0, -1),
+    K_u: (1, 2, 1), K_b: (2, 0, -1), K_f: (2, 2, 1)
+}  
     
-class Cube():
-    def __init__(self, id, N, scale):
-        self.N = N
+class GLCubie():
+    def __init__(self, id, scale):
         self.scale = scale
         self.init_i = [*id]
         self.current_i = [*id]
@@ -42,12 +53,12 @@ class Cube():
             self.rot[k][i], self.rot[k][j] = -self.rot[k][j]*dir, self.rot[k][i]*dir
 
         self.current_i[i], self.current_i[j] = (
-            self.current_i[j] if dir < 0 else self.N - 1 - self.current_i[j],
-            self.current_i[i] if dir > 0 else self.N - 1 - self.current_i[i] )
+            self.current_i[j] if dir < 0 else kCubeDim - 1 - self.current_i[j],
+            self.current_i[i] if dir > 0 else kCubeDim - 1 - self.current_i[i] )
 
     def transformMat(self):
         scaleA = [[s*self.scale for s in a] for a in self.rot]  
-        scaleT = [(p-(self.N-1)/2)*2.1*self.scale for p in self.current_i] 
+        scaleT = [(p-(kCubeDim-1)/2)*2.1*self.scale for p in self.current_i] 
         return [*scaleA[0], 0, *scaleA[1], 0, *scaleA[2], 0, *scaleT, 1]
 
     def draw(self, col, surf, vert, animate, angle, axis, slice, dir):
@@ -66,47 +77,60 @@ class Cube():
 
         glPopMatrix()
 
-class EntireCube():
-    def __init__(self, N, scale):
-        self.N = N
-        cr = range(self.N)
-        self.cubes = [Cube((x, y, z), self.N, scale) for x in cr for y in cr for z in cr]
+class GLCube():
+    def __init__(self, flat_cube):
+        cr = range(kCubeDim)
+        self.gl_cubies = [GLCubie((x, y, z), 1.5) for x in cr for y in cr for z in cr]
+        self.cube = flat_cube
 
-    def mainloop(self):
 
-        rot_cube_map  = { K_UP: (-1, 0), K_DOWN: (1, 0), K_LEFT: (0, -1), K_RIGHT: (0, 1)}
-        rot_slice_map = {
-            K_l: (0, 0, 1), K_r: (0, 2, -1), K_d: (1, 0, 1),
-            K_u: (1, 2, -1), K_b: (2, 0, 1), K_f:  (2, 2, -1) 
-        }  
-        p_rot_slice_map = {
-            K_l: (0, 0, -1), K_r: (0, 2, 1), K_d: (1, 0, -1),
-            K_u: (1, 2, 1), K_b: (2, 0, -1), K_f: (2, 2, 1)
-        }  
+class PyOpenGlLoop:
 
+    def init(self, flat_cube):
+        # OpenGL boilerplate
+        pygame.init()
+        display = (800,600)
+        pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
+        glEnable(GL_DEPTH_TEST) 
+        glMatrixMode(GL_PROJECTION)
+        gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
+
+        self.gl_cube = GLCube(flat_cube)
+    
+    def loop(self):
         ang_x, ang_y, rot_cube = 0, 0, (0, 0)
         animate, animate_ang, animate_speed = False, 0, 5
         action = (0, 0, 0)
-        while True:
 
+        shouldQuit = False
+        while not shouldQuit:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT or (event.type == KEYDOWN and event.key == pygame.K_q):
-                    pygame.quit()
-                    quit()
+                if event.type == pygame.QUIT or (event.type == KEYDOWN and (event.key == pygame.K_q or event.key == pygame.K_ESCAPE)):
+                    shouldQuit = True
                 if event.type == KEYDOWN:
+
+                    #Begin Rotate Camera
                     if event.key in rot_cube_map:
                         rot_cube = rot_cube_map[event.key]
+                    
+                    # Non-Prime Move
                     if not animate and event.key in rot_slice_map and not (pygame.key.get_mods() & pygame.KMOD_SHIFT):
                         animate, action = True, rot_slice_map[event.key]
+                    
+                    # Prime Move
                     elif not animate and event.key in p_rot_slice_map:
                         animate, action = True, p_rot_slice_map[event.key]
+                
+                # End Rotate Camera
                 if event.type == KEYUP:
                     if event.key in rot_cube_map:
                         rot_cube = (0, 0)
 
+            # Calculate new Angle for Camera
             ang_x += rot_cube[0]*2
             ang_y += rot_cube[1]*2
 
+            # Perform Camera Translation
             glMatrixMode(GL_MODELVIEW)
             glLoadIdentity()
             glTranslatef(0, 0, -40)
@@ -117,30 +141,26 @@ class EntireCube():
 
             if animate:
                 if animate_ang >= 90:
-                    for cube in self.cubes:
+                    for cube in self.gl_cube.gl_cubies:
                         cube.update(*action)
                     animate, animate_ang = False, 0
 
-            for cube in self.cubes:
+            for cube in self.gl_cube.gl_cubies:
                 cube.draw(colors, surfaces, vertices, animate, animate_ang, *action)
             if animate:
                 animate_ang += animate_speed
 
             pygame.display.flip()
             pygame.time.wait(10)
+        pygame.quit()
+        sys.exit()
 
 def main():
-
-    pygame.init()
-    display = (800,600)
-    pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
-    glEnable(GL_DEPTH_TEST) 
-
-    glMatrixMode(GL_PROJECTION)
-    gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
-
-    NewEntireCube = EntireCube(3, 1.5) 
-    NewEntireCube.mainloop()
+    flat_cube = Cube()
+    flat_cube.scramble()
+    loop = PyOpenGlLoop()
+    loop.init(flat_cube)
+    loop.loop()
 
 if __name__ == '__main__':
     main()

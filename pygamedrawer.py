@@ -20,7 +20,7 @@ class PyGameCubeDrawer:
                 pygame.draw.rect(screen, color, (x, y, kCubieSize, kCubieSize))
 
 class PyGameLoop:
-    def init(self):
+    def init(self, flat_cube = None):
         # Pygame set-up
         pygame.init()
         os.environ['SDL_VIDEO_CENTERED'] = '1'

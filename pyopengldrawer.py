@@ -7,7 +7,6 @@ from cube import Cube
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
-# https://stackoverflow.com/questions/50303616/how-to-rotate-slices-of-a-rubiks-cube-in-python-pyopengl
 
 vertices = (
     ( 1, -1, -1), ( 1,  1, -1), (-1,  1, -1), (-1, -1, -1),
@@ -35,6 +34,7 @@ p_rot_slice_map = {
 }  
 
 kAnimateSpeed = 5
+kSingleTurnDegrees = 90
 
 class GLCubie():
     def __init__(self, id, scale, flat_cube):
@@ -51,7 +51,7 @@ class GLCubie():
         if not self.isAffected(axis, slice, dir):
             return
 
-        i, j = (axis+1) % 3, (axis+2) % 3
+        i, j = (axis + 1) % 3, (axis + 2) % 3
         for k in range(3):
             self.rot[k][i], self.rot[k][j] = -self.rot[k][j] * dir, self.rot[k][i] * dir
 
@@ -98,7 +98,7 @@ class GLCube():
 
     def update(self):
         if self.isAnimating():
-            if self.animate_ang >= 90:
+            if self.animate_ang >= kSingleTurnDegrees:
                 for cube in self.gl_cubies:
                     cube.update(*self.action)
                 self.animate, self.animate_ang = False, 0
@@ -135,7 +135,7 @@ class PyOpenGlLoop:
     def init(self, flat_cube):
         # OpenGL boilerplate
         pygame.init()
-        display = (800,600)
+        display = (kScreenWidth, kScreenHeight)
         pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
         glEnable(GL_DEPTH_TEST) 
         glMatrixMode(GL_PROJECTION)
@@ -144,7 +144,7 @@ class PyOpenGlLoop:
         self.gl_cube = GLCube(flat_cube)
         self.camera = PyGLCamera()
     
-    def loop(self):
+    def run(self):
         ang_x, ang_y, rot_cube = 0, 0, (0, 0)
 
         shouldQuit = False
@@ -188,15 +188,3 @@ class PyOpenGlLoop:
             
         pygame.quit()
         sys.exit()
-
-def main():
-    flat_cube = Cube()
-    flat_cube.scramble()
-    loop = PyOpenGlLoop()
-    loop.init(flat_cube)
-    loop.loop()
-
-if __name__ == '__main__':
-    main()
-    pygame.quit()
-    quit()

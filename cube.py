@@ -89,6 +89,9 @@ class Cube:
         if moveToUndo[-1] == '2':
             return
         self.rotateFace(face)
+    
+    def getHash(self):
+        return ''.join([face.value for face in self.faces])
 
 
  

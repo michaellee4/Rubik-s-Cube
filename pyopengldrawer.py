@@ -82,8 +82,7 @@ class GLCubie():
 
 class GLCube():
     def __init__(self, flat_cube):
-        cr = range(kCubeDim)
-        self.gl_cubies = [GLCubie((x, y, z), 1.5) for x in cr for y in cr for z in cr]
+        self.gl_cubies = [GLCubie((x, y, z), 1.5) for x in range(kCubeDim) for y in range(kCubeDim) for z in range(kCubeDim)]
         self.flat_cube = flat_cube
         self.animate = False
         self.animate_ang = 0

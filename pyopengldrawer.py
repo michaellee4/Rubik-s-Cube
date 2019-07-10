@@ -36,7 +36,7 @@ p_rot_slice_map = {
 kAnimateSpeed = 5
 kSingleTurnDegrees = 90
 
-class GLCubie():
+class GLCubie:
     def __init__(self, id, scale):
         self.scale = scale
         self.init_i = [*id]
@@ -80,7 +80,7 @@ class GLCubie():
 
         glPopMatrix()
 
-class GLCube():
+class GLCube:
     def __init__(self, flat_cube):
         self.gl_cubies = [GLCubie((x, y, z), 1.5) for x in range(kCubeDim) for y in range(kCubeDim) for z in range(kCubeDim)]
         self.flat_cube = flat_cube

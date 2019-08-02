@@ -1,6 +1,6 @@
-# Chess-Engine
+# Rubik's Cube
 
-C++ Chess Engine, UCI and XBoard/WinBoard compliant
+A fully interactive, 3D Rubik's Cube
 
 ## How to run
 To use the engine in console mode on linux
@@ -10,7 +10,9 @@ To use the engine in console mode on linux
 
 ## Controls
 Up/Down/Left/Right - Controls the camera
+
 u/d/l/r/f/b - Performs a cube rotation based on the standard notation https://ruwix.com/the-rubiks-cube/notation/
+
 Shift + u/d/l/r/f/b - Performs an inverse cube rotation based on the standard notation
 
 ## Notes

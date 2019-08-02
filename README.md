@@ -16,4 +16,4 @@ To use the engine in console mode on linux
 * Shift + u/d/l/r/f/b - Performs an inverse cube rotation based on the standard notation
 
 ## Notes
-* Currently, the solver is not fully working. Eventually this will implement Thistlewaite's algorithm which guarantees a solve in under 52 moves.
+* Currently, the solver is not fully working. Eventually, this will implement Thistlewaite's algorithm which guarantees a solve in under 52 moves.
